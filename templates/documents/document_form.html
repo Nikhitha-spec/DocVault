@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Document - Smart DMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Upload Document</h2>
+    <a href="{% url 'documents:document_list' %}" class="btn btn-outline-secondary">Back to List</a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_title" class="form-label">Document Title</label>
+                        {{ form.title }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_description" class="form-label">Description</label>
+                        {{ form.description }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_category" class="form-label">Category</label>
+                        {{ form.category }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_department" class="form-label">Department</label>
+                        {{ form.department }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_file" class="form-label">File</label>
+                        {{ form.file }}
+                        <small class="form-text text-muted">Allowed file types: PDF, DOCX, XLSX, TXT (Max 10MB)</small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Upload Document</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

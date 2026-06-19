@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Documents - Smart DMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Documents</h2>
+    {% if user.is_super_admin or user.is_department_admin %}
+    <a href="{% url 'documents:document_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-2"></i> Upload Document
+    </a>
+    {% endif %}
+</div>
+
+<!-- Search and Filter -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <input type="text" name="search" class="form-control" placeholder="Search documents..." value="{{ search_query }}">
+            </div>
+            <div class="col-md-2">
+                <select name="category" class="form-select">
+                    <option value="">All Categories</option>
+                    <option value="policy" {% if category == 'policy' %}selected{% endif %}>Policy</option>
+                    <option value="report" {% if category == 'report' %}selected{% endif %}>Report</option>
+                    <option value="contract" {% if category == 'contract' %}selected{% endif %}>Contract</option>
+                    <option value="manual" {% if category == 'manual' %}selected{% endif %}>Manual</option>
+                    <option value="invoice" {% if category == 'invoice' %}selected{% endif %}>Invoice</option>
+                    <option value="presentation" {% if category == 'presentation' %}selected{% endif %}>Presentation</option>
+                    <option value="other" {% if category == 'other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="department" class="form-select">
+                    <option value="">All Departments</option>
+                    {% for dept in departments %}
+                        <option value="{{ dept.id }}" {% if department == dept.id|stringformat:"s" %}selected{% endif %}>{{ dept.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="file_type" class="form-select">
+                    <option value="">All Types</option>
+                    <option value="pdf" {% if file_type == 'pdf' %}selected{% endif %}>PDF</option>
+                    <option value="docx" {% if file_type == 'docx' %}selected{% endif %}>DOCX</option>
+                    <option value="xlsx" {% if file_type == 'xlsx' %}selected{% endif %}>XLSX</option>
+                    <option value="txt" {% if file_type == 'txt' %}selected{% endif %}>TXT</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="sort" class="form-select">
+                    <option value="-upload_date" {% if sort_by == '-upload_date' %}selected{% endif %}>Latest</option>
+                    <option value="upload_date" {% if sort_by == 'upload_date' %}selected{% endif %}>Oldest</option>
+                    <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Name A-Z</option>
+                    <option value="-title" {% if sort_by == '-title' %}selected{% endif %}>Name Z-A</option>
+                </select>
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Department</th>
+                        <th>Type</th>
+                        <th>Size</th>
+                        <th>Version</th>
+                        <th>Uploaded By</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for document in documents %}
+                    <tr>
+                        <td><strong>{{ document.title }}</strong></td>
+                        <td><span class="badge bg-secondary">{{ document.get_category_display }}</span></td>
+                        <td>{{ document.department.name }}</td>
+                        <td><span class="badge bg-info">{{ document.file_type|upper }}</span></td>
+                        <td>{{ document.file_size_formatted }}</td>
+                        <td><span class="badge bg-warning">v{{ document.version }}</span></td>
+                        <td>{{ document.uploaded_by.username }}</td>
+                        <td>{{ document.upload_date|date:"M d, Y" }}</td>
+                        <td>
+                            <a href="{% url 'documents:document_detail' document.pk %}" class="btn btn-sm btn-info">View</a>
+                            <a href="{% url 'documents:document_download' document.pk %}" class="btn btn-sm btn-success">Download</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center text-muted">No documents found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% if is_paginated %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&category={{ category }}&department={{ department }}&file_type={{ file_type }}&sort={{ sort_by }}">Previous</a>
+                    </li>
+                {% endif %}
+                
+                <li class="page-item active">
+                    <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                </li>
+                
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&category={{ category }}&department={{ department }}&file_type={{ file_type }}&sort={{ sort_by }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Employee Dashboard - Smart DMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Employee Dashboard</h2>
+    <div>
+        <span class="badge bg-info fs-6 me-2">Employee</span>
+        <span class="badge bg-secondary">{{ user.department.name }}</span>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ accessible_documents }}</div>
+                        <div class="stat-label">Accessible Documents</div>
+                    </div>
+                    <i class="bi bi-file-earmark-text stat-icon text-primary"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card stat-card success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ recent_downloads }}</div>
+                        <div class="stat-label">Downloads This Week</div>
+                    </div>
+                    <i class="bi bi-download stat-icon text-success"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card stat-card warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ recent_documents }}</div>
+                        <div class="stat-label">New Documents</div>
+                    </div>
+                    <i class="bi bi-file-plus stat-icon text-warning"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accessible Documents -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Accessible Documents</h5>
+        <a href="{% url 'documents:document_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Department</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for document in accessible_documents_list %}
+                    <tr>
+                        <td>{{ document.title }}</td>
+                        <td><span class="badge bg-secondary">{{ document.get_category_display }}</span></td>
+                        <td>{{ document.department.name }}</td>
+                        <td>{{ document.upload_date|date:"M d, Y" }}</td>
+                        <td>
+                            <a href="{% url 'documents:document_detail' document.pk %}" class="btn btn-sm btn-info">View</a>
+                            <a href="{% url 'documents:document_download' document.pk %}" class="btn btn-sm btn-success">Download</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No accessible documents</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Downloads -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Recent Downloads</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Document</th>
+                        <th>Downloaded At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for download in recent_downloads_list %}
+                    <tr>
+                        <td>{{ download.document.title }}</td>
+                        <td>{{ download.timestamp|date:"M d, Y H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2" class="text-center text-muted">No recent downloads</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

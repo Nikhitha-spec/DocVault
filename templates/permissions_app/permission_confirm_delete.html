@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Permission - Smart DMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Delete Permission</h2>
+    <a href="{% url 'permissions_app:permission_list' %}" class="btn btn-outline-secondary">Back to List</a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <h5 class="alert-heading">Are you sure?</h5>
+                    <p>Do you really want to delete this permission? This action cannot be undone.</p>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                    <a href="{% url 'permissions_app:permission_list' %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Permission - Smart DMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{% if document %}Assign Permission to {{ document.title }}{% else %}Add Permission{% endif %}</h2>
+    <a href="{% url 'permissions_app:permission_list' %}" class="btn btn-outline-secondary">Back to List</a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_document" class="form-label">Document</label>
+                        {{ form.document }}
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong>Note:</strong> Assign permission to at least one of the following: User, Role, or Department.
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_user" class="form-label">User (Optional)</label>
+                        {{ form.user }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_role" class="form-label">Role (Optional)</label>
+                        {{ form.role }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_department" class="form-label">Department (Optional)</label>
+                        {{ form.department }}
+                    </div>
+                    
+                    <h5 class="mt-4 mb-3">Permissions</h5>
+                    <div class="form-check mb-2">
+                        {{ form.can_view }}
+                        <label class="form-check-label" for="id_can_view">Can View</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        {{ form.can_download }}
+                        <label class="form-check-label" for="id_can_download">Can Download</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        {{ form.can_edit }}
+                        <label class="form-check-label" for="id_can_edit">Can Edit</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        {{ form.can_delete }}
+                        <label class="form-check-label" for="id_can_delete">Can Delete</label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary mt-4">Save Permission</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

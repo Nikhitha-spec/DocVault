@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Replace Document - Smart DMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Replace Document File</h2>
+    <a href="{% url 'documents:document_detail' document.pk %}" class="btn btn-outline-secondary">Back to Document</a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h5 class="alert-heading">Current Version: v{{ document.version }}</h5>
+                    <p>Replacing the file will create a new version (v{{ document.version|add:1 }}) and preserve the current version in history.</p>
+                </div>
+                
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_file" class="form-label">New File</label>
+                        {{ form.file }}
+                        <small class="form-text text-muted">Allowed file types: PDF, DOCX, XLSX, TXT (Max 10MB)</small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-warning">Replace File</button>
+                    <a href="{% url 'documents:document_detail' document.pk %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

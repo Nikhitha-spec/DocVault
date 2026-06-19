@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Permissions - Smart DMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Document Permissions</h2>
+    {% if user.is_super_admin %}
+    <a href="{% url 'permissions_app:permission_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-2"></i> Add Permission
+    </a>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Document</th>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Department</th>
+                        <th>View</th>
+                        <th>Download</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                        {% if user.is_super_admin %}
+                        <th>Actions</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for permission in permissions %}
+                    <tr>
+                        <td><strong>{{ permission.document.title }}</strong></td>
+                        <td>{{ permission.user.username|default:"-" }}</td>
+                        <td>{{ permission.role|default:"-" }}</td>
+                        <td>{{ permission.department.name|default:"-" }}</td>
+                        <td>{% if permission.can_view %}<i class="bi bi-check-circle text-success"></i>{% else %}<i class="bi bi-x-circle text-danger"></i>{% endif %}</td>
+                        <td>{% if permission.can_download %}<i class="bi bi-check-circle text-success"></i>{% else %}<i class="bi bi-x-circle text-danger"></i>{% endif %}</td>
+                        <td>{% if permission.can_edit %}<i class="bi bi-check-circle text-success"></i>{% else %}<i class="bi bi-x-circle text-danger"></i>{% endif %}</td>
+                        <td>{% if permission.can_delete %}<i class="bi bi-check-circle text-success"></i>{% else %}<i class="bi bi-x-circle text-danger"></i>{% endif %}</td>
+                        {% if user.is_super_admin %}
+                        <td>
+                            <a href="{% url 'permissions_app:permission_delete' permission.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center text-muted">No permissions found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% if is_paginated %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+                
+                <li class="page-item active">
+                    <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                </li>
+                
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

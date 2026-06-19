@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}Department Admin Dashboard - Smart DMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Department Admin Dashboard</h2>
+    <div>
+        <span class="badge bg-warning fs-6 me-2">Department Admin</span>
+        <span class="badge bg-secondary">{{ user.department.name }}</span>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ department_users }}</div>
+                        <div class="stat-label">Department Users</div>
+                    </div>
+                    <i class="bi bi-people stat-icon text-primary"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card stat-card success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ department_documents }}</div>
+                        <div class="stat-label">Department Documents</div>
+                    </div>
+                    <i class="bi bi-file-earmark-text stat-icon text-success"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card stat-card warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ recent_uploads_count }}</div>
+                        <div class="stat-label">Uploads This Week</div>
+                    </div>
+                    <i class="bi bi-upload stat-icon text-warning"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card stat-card danger">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ recent_activities_count }}</div>
+                        <div class="stat-label">Activities Today</div>
+                    </div>
+                    <i class="bi bi-activity stat-icon text-danger"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Department Documents -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Department Documents</h5>
+        <a href="{% url 'documents:document_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Uploaded By</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for document in department_documents_list %}
+                    <tr>
+                        <td>{{ document.title }}</td>
+                        <td><span class="badge bg-secondary">{{ document.get_category_display }}</span></td>
+                        <td>{{ document.uploaded_by.username }}</td>
+                        <td>{{ document.upload_date|date:"M d, Y" }}</td>
+                        <td>
+                            <a href="{% url 'documents:document_detail' document.pk %}" class="btn btn-sm btn-info">View</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No documents in your department</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Department Activities -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Recent Department Activities</h5>
+        <a href="{% url 'activity_logs:activity_log_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Object Type</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for activity in recent_activities %}
+                    <tr>
+                        <td>{{ activity.user.username }}</td>
+                        <td><span class="badge bg-info">{{ activity.get_action_display }}</span></td>
+                        <td>{{ activity.object_type }}</td>
+                        <td>{{ activity.timestamp|date:"M d, Y H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">No recent activities</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

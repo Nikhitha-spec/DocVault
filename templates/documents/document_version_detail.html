@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Version {{ version.version_number }} - {{ document.title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Version {{ version.version_number }} - {{ document.title }}</h2>
+    <a href="{% url 'documents:document_detail' document.pk %}" class="btn btn-outline-secondary">Back to Document</a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Version Details</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th width="30%">Document</th>
+                        <td>{{ document.title }}</td>
+                    </tr>
+                    <tr>
+                        <th>Version Number</th>
+                        <td><span class="badge bg-primary">v{{ version.version_number }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Uploaded By</th>
+                        <td>{{ version.uploaded_by.username }}</td>
+                    </tr>
+                    <tr>
+                        <th>Uploaded At</th>
+                        <td>{{ version.uploaded_at|date:"F d, Y H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Change Notes</th>
+                        <td>{{ version.change_notes|default:"-" }}</td>
+                    </tr>
+                </table>
+                
+                <div class="mt-4">
+                    <a href="{{ version.file.url }}" class="btn btn-success" download>Download This Version</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
