@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: docvault
+    env: python
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: gunicorn smart_dms.wsgi:application
+    envVars:
+      - key: DEBUG
+        value: False
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: docvault-db
+          property: connectionString
+databases:
+  - name: docvault-db
+    databaseName: docvault
+    user: docvault_user
